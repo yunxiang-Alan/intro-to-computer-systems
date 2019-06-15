@@ -1,0 +1,58 @@
+#include "cachelab.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char **argv)
+{
+  // part 1: reading in and storing command-line arguments
+  int vflag = 0;
+  char *svalue = NULL;
+  char *evalue = NULL;
+  char *bvalue = NULL;
+  char *tvalue = NULL;
+  int c;
+  opterr = 0;
+
+  while ((c = getopt (argc, argv, "vs:E:b:t:")) != -1){
+    switch (c)
+      {
+      case 'v':
+        vflag = 1;
+        break;
+      case 's':
+        svalue = optarg;
+        break;
+      case 'E':
+        evalue = optarg;
+        break;
+      case 'b':
+        bvalue = optarg;
+        break;
+      case 't':
+        tvalue = optarg;
+        break;
+      case '?':
+        if (optopt == 's' || optopt == 'E' || optopt == 'b' || optopt == 't')
+          fprintf (stderr, "Option requires an argument.\n");
+        else
+          fprintf (stderr, "Unknown option character\n");
+	      return 1;
+      default:
+	      abort ();
+      }
+  }
+
+  printf ("vflag = %d, svalue = %s, evalue = %s, bvalue = %s, tvalue = %s\n",
+	  vflag, svalue, evalue, bvalue, tvalue);
+
+  // part 2: read in files
+  
+
+
+
+
+
+  //printSummary(0, 0, 0);
+  return 0;
+}
