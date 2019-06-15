@@ -1,0 +1,153 @@
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <sys/wait.h>
+
+void display_error(){
+  char error_message[30] = "An error has occurred\n";
+  write(STDOUT_FILENO, error_message, strlen(error_message));
+}
+
+void myPrint(char *msg)
+{
+    write(STDOUT_FILENO, msg, strlen(msg));
+}
+
+// tested, correct
+// remove frontmost and backmost spaces as well as \n of a given string
+char *no_blanks(char *instr, char *outstr){
+  int i = 0, j = 0, k = 0;
+  if(instr[0] == '\0')
+    return "\0";
+  while(instr[i] == ' '){
+    i++;
+  }
+  while(instr[i] != '\0'){
+    outstr[j] = instr[i];
+    i++;
+    j++;
+  }
+  outstr[j] = '\0';
+  k = j;
+  while(outstr[k-1] == ' ' || outstr[k-1] == '\n'){
+    k--;
+  }
+  outstr[k] = '\0';
+  //printf("outstr is:%s(the end)\n",outstr);
+  return outstr;
+}
+
+// untested
+// return the number of arguments in a single command
+// e.g. "pwd" gives 1, "cd Desktop" gives 2
+int num_arg(char *cmd){
+  char *cmd_dup = strdup(cmd);
+  int i = 0, num = 0;
+  while(cmd_dup[i+1] != '\0'){
+    if(cmd_dup[i] == ' ' && cmd_dup[i+1] != ' '){
+      num++;
+    }
+    i++;
+  }
+  free(cmd_dup);
+  return num+1;
+}
+
+// generate an array composed of elements of a single command
+// note: the array is ended with NULL
+void generate_array(int num_argr, char *cmd, char *arr[]){
+  int i = 0;
+  char *token = strtok_r(cmd, " ",&cmd);
+  while( token != NULL ) {
+    arr[i] = token;
+    //printf("%dth element in the array is: %s\n",i,token);
+    i++;
+    token = strtok_r(NULL, " ",&cmd);
+  }
+  arr[i] = NULL;
+}
+
+int main(int argc, char *argv[]) 
+{
+  char cmd_buff[100];
+  char *pinput;
+  pid_t forkret;
+  FILE *batch_file;
+  
+    while (1) {
+        if(argc == 2)
+            batch_file = fopen(argv[1],"r");
+        
+        if(argc == 1){
+            myPrint("myshell> ");
+            pinput = fgets(cmd_buff, 100, stdin);
+        }
+        else if(argc == 2){
+            pinput = fgets(cmd_buff, 100, batch_file);
+        }
+        
+      if(!pinput) {
+          exit(0);
+      }
+      
+        if(argc == 2)
+            write(STDOUT_FILENO, pinput, strlen(pinput));
+        
+      // remove unnecessary spaces & \n
+      pinput = no_blanks(cmd_buff,pinput);
+      
+      char *raw_curr_cmd = malloc(100); 
+      char *curr_cmd = malloc(100);
+      raw_curr_cmd = strtok_r(pinput,";",&pinput);
+      //printf("raw_curr_cmd is:%s(end)\n",raw_curr_cmd);
+      while (raw_curr_cmd != NULL){ 
+	curr_cmd = no_blanks(raw_curr_cmd,curr_cmd);
+	//printf("curr_cmd is:%s(end)\n",curr_cmd);
+	
+	int num_argr = num_arg(curr_cmd);
+	char **cmd_element = malloc((num_argr+1)*sizeof(char *));
+	generate_array(num_argr,curr_cmd,cmd_element);
+	
+	if(strcmp(cmd_element[0],"exit") == 0){
+	  exit(0);
+	}
+	else if(strcmp(cmd_element[0],"pwd") == 0){
+	  char cwd[100];
+	  myPrint(getcwd(cwd,100));
+	  myPrint("\n");
+	}
+	else if(strcmp(cmd_element[0],"cd") == 0){
+	  if(num_argr == 1){
+	    chdir(getenv("HOME"));
+	  }
+	  else if(num_argr == 2){
+	    int error_flag = chdir(cmd_element[1]);
+	    if(error_flag)
+	      display_error(); // displays an error when cd fails
+	  }
+	}
+	else{
+	  forkret = fork();
+	  if(forkret == 0){
+	    execvp(cmd_element[0],cmd_element);   
+	    //printf("exeflag is: %d\n",exeflag);
+	  }else{
+	    int status;
+	    waitpid(forkret,&status,0);
+	  }
+	}
+	free(cmd_element);
+	raw_curr_cmd = strtok_r(NULL,";",&pinput);
+      }
+      
+      free(raw_curr_cmd);
+      free(curr_cmd);
+        
+        if(argc == 2)
+            fclose(batch_file);
+      
+    } // while loop ends
+
+}
