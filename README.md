@@ -4,5 +4,5 @@ This is the repository for my work in UChicago CMSC 15400 Introduction to Comput
 Description:
 - Bitmanip  
 - Cache  
-- Shell  
+- Shell: a basic Unix Shell
 - Malloc  
