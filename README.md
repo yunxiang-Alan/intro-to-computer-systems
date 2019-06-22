@@ -3,6 +3,6 @@ This is the repository for my work in UChicago CMSC 15400 Introduction to Comput
 
 Description:
 - Bitmanip  
-- Cache  
-- Shell: a basic Unix Shell
-- Malloc  
+- Cache: a basic cache simulator    
+- Shell: a basic Unix shell
+- Malloc: a basic dynamic memory allocator implemented with explicit list  
