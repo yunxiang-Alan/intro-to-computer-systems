@@ -1,5 +1,5 @@
-# uchicago-cs154-project
-This is the repository for my work in UChicago CMSC 15400 Introduction to Computer Systems, which is modeled after a course with the same name at CMU. There are five projects for this course (Bitmanip, Bomb, Cache, Shell, Malloc), while this repository includes four of these projects.             
+# intro-systems-project
+This is the repository for my work in UChicago CS 154 Introduction to Computer Systems, which is modeled after a course with the same name at CMU. There are five projects for this course (Bitmanip, Bomb, Cache, Shell, Malloc), while this repository includes four of them.             
 
 ## Description
 * Bitmanip  
@@ -15,3 +15,5 @@ This is the repository for my work in UChicago CMSC 15400 Introduction to Comput
 | cache       | 100         |
 | shell       | 100         |
 | malloc      | 98          |
+
+Note: my malloc project is implemented with a well-tuned explicit free list; to achieve a score higher than 98 the use of segregated free list is required.
