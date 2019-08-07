@@ -6,3 +6,12 @@ Description:
 - Cache: a basic cache simulator    
 - Shell: a basic Unix shell
 - Malloc: a basic dynamic memory allocator implemented with explicit list  
+
+Scores:
+| Project     | Score       |
+| ----------- | ----------- |
+| bitmanip    | 100         |
+| bomb        | 100         |
+| cache       | 100         |
+| shell       | 100         |
+| malloc      | 98          |
